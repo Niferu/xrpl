@@ -11,7 +11,7 @@ async function fundAccount() {
   try {
     console.log('\nCreating a new wallet and funding it with Testnet XRP...')
     // Max faucet limit: 100
-    const options = { amount: '100' }
+    const options = { amount: '66' }
     const { wallet, balance } = await client.fundWallet(null, options)
     const new_wallet = wallet
     console.log(`Wallet: ${new_wallet.address}`)
@@ -26,6 +26,41 @@ async function fundAccount() {
 
     /** @dev Create wallet using seed words */
     // const seed_wallet = xrpl.Wallet.fromSeed("your-seed-key")
+
+    /** @dev Transfer funds to incomplete wallet */
+    const prepared = await client.autofill({
+      TransactionType: 'Payment',
+      Account: wallet.address,
+      DeliverMax: xrpl.xrpToDrops('22'),
+      Destination: incomplete_wallet.address,
+    })
+    const max_ledger = prepared.LastLedgerSequence
+    console.log('Prepared transaction instructions:', prepared)
+    console.log('Transaction cost:', xrpl.dropsToXrp(prepared.Fee), 'XRP')
+    console.log('Transaction expires after ledger:', max_ledger)
+
+    // Sign prepared instruction
+    const signed = wallet.sign(prepared)
+    console.log('Identifying hash:', signed.hash)
+    console.log('Signed blob:', signed.tx_blob)
+
+    // Submit signed blob
+    const tx = await client.submitAndWait(signed.tx_blob)
+
+    // Check transaction results
+    console.log('Transaction result:', tx.result.meta.TransactionResult)
+    console.log(
+      'Balance changes:',
+      JSON.stringify(xrpl.getBalanceChanges(tx.result.meta), null, 2),
+    )
+
+    /** @dev Compare balances */
+    const walletBalance = await client.getXrpBalance(wallet.address)
+    const incompleteWalletBalance = await client.getXrpBalance(
+      incomplete_wallet.address,
+    )
+    console.log(`Wallet Balance: ${walletBalance}`)
+    console.log(`Incomplete Wallet Balance: ${incompleteWalletBalance}`)
 
     /** @dev Get account info from the ledger */
     console.log('\nGetting account info...')
