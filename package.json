@@ -1,12 +1,9 @@
 {
   "type": "module",
   "scripts": {
-    "start": "NODE_NO_WARNINGS=1 npx ts-node src/fund-account.ts"
+    "start": "node src/fund-account.js"
   },
   "dependencies": {
     "xrpl": "^4.4.1"
-  },
-  "devDependencies": {
-    "ts-node": "^10.9.2"
   }
 }
