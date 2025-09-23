@@ -10,6 +10,8 @@ async function fundAccount() {
   /** @dev Create and fund wallet */
   try {
     console.log('\nCreating a new wallet and funding it with Testnet XRP...')
+    /** @TODO Figure out how to populate wallet by using private key */
+    // ...
     // Max faucet limit: 100
     const options = { amount: '66' }
     const { wallet, balance } = await client.fundWallet(null, options)
@@ -25,7 +27,7 @@ async function fundAccount() {
     console.log(`Incomplete Wallet Address: ${incomplete_wallet.address}`)
 
     /** @dev Create wallet using seed words */
-    // const seed_wallet = xrpl.Wallet.fromSeed("your-seed-key")
+    // const seed_wallet = xrpl.Wallet.fromSeed("seed-key")
 
     /** @dev Transfer funds to incomplete wallet */
     const prepared = await client.autofill({
