@@ -51,6 +51,7 @@ async function fundAccount() {
 
     // Check transaction results
     console.log('Transaction result:', tx.result.meta.TransactionResult)
+    console.log('Transaction result metadata:', tx.result.meta)
     console.log(
       'Balance changes:',
       JSON.stringify(xrpl.getBalanceChanges(tx.result.meta), null, 2),
